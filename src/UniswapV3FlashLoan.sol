@@ -5,7 +5,6 @@ import "forge-std/console.sol";
 
 contract UniswapV3Flash {
     address private constant FACTORY = 0x1F98431c8aD98523631AE4a59f267346ea31F984;
-
     struct FlashCallbackData {
         uint amount0;
         uint amount1;
@@ -13,6 +12,7 @@ contract UniswapV3Flash {
     }
 
     IERC20 private immutable token0;
+
     IERC20 private immutable token1;
 
     IUniswapV3Pool private immutable pool;
