@@ -18,29 +18,75 @@ contract StakingRewardsTest is Test {
 
     function testTrue() public {
         console.log("Starting block timestamp:", block.timestamp);
-        deal(address(WETH), address(stakingRewards), 1e18 * 1e12);
-        deal(address(WETH), address(this), 1e18 * 1e12);
+        deal(address(WETH), address(stakingRewards), 86400 * 10);
+        deal(address(WETH), address(this), 1);
 
         stakingRewards.setRewardsDuration(86400);
-        stakingRewards.notifyRewardAmount(1000 * 10 ** 18);
+        stakingRewards.notifyRewardAmount(86400 * 10);
+
+        console.log("Reward rate", stakingRewards.rewardRate());
 
         // approve stakingRewards to spend WETH
         WETH.approve(address(stakingRewards), 1e30);
-        stakingRewards.stake(1e18);
 
-        // Increase time by 1 day using vm.warp
-        vm.warp(block.timestamp + 86400);
+        // Stake
+        stakingRewards.stake(1);
 
-        // Before any actions taken
-        console.log("Earned:", stakingRewards.earned(address(this)));
-        console.log("rewardPerToken:", stakingRewards.rewardPerToken());
-        console.log("rewardPerTokenStored:", stakingRewards.rewardPerTokenStored());
-        console.log("updatedAt:", stakingRewards.updatedAt());
-        console.log("finishAt:", stakingRewards.finishAt());
+        // Increase time by using vm.warp
+        vm.warp(block.timestamp + 86400 - 1);
+
+        vm.startPrank(address(0x1));
+
+        deal(address(WETH), address(0x1), 1);
+        WETH.approve(address(stakingRewards), 1e30);
+        stakingRewards.stake(1);
+
+        vm.stopPrank();
+
+        vm.warp(block.timestamp + 1);
+
+        // withdraw stake
+        stakingRewards.withdraw(1);
+
+        console.log("Reward per token stored", stakingRewards.rewardPerTokenStored());
+        console.log("Reward per token", stakingRewards.rewardPerToken());
+
+        // console.log("Reward token balance:", WETH.balanceOf(address(stakingRewards)));
+        // console.log("Earned:", stakingRewards.earned(address(this)));
+        // console.log("Total supply:", stakingRewards.totalSupply());
+        // console.log("rewardPerToken:", stakingRewards.rewardPerToken());
+        // console.log("rewardPerTokenStored:", stakingRewards.rewardPerTokenStored());
+        // console.log("updatedAt:", stakingRewards.updatedAt());
+        // console.log("finishAt:", stakingRewards.finishAt());
+        // console.log(
+        //     "userRewardPerTokenPaid:",
+        //     stakingRewards.userRewardPerTokenPaid(address(this))
+        // );
+        // console.log("Current timestamp:", block.timestamp);
+
+        // claim rewards
+        stakingRewards.getReward();
+
+        // check weth balance
+        console.log("Reward token balance this:", WETH.balanceOf(address(this)));
         console.log(
-            "userRewardPerTokenPaid:",
-            stakingRewards.userRewardPerTokenPaid(address(this))
+            "Reward token balance staking:",
+            WETH.balanceOf(address(stakingRewards))
         );
-        console.log("Current timestamp:", block.timestamp);
     }
 }
+
+/* 
+Notes on testing:
+
+First experiment: 
+walkthrough of calculations
+1) Set reward duration to 86400, and notifyRewardAmount(1e6)
+2) when notifyRewardAmount is called, it updatesRewards(0)
+3) rewardPerToken() = 0 (since totalSupply = 0, and rewardPerTokenStored = 0)
+4) rewardPerTokenStored = 0
+5) updatedAt = lastTimeRewardApplicable() = block.timestamp
+6) back to notifyRewardAmount
+7) remainingRewards = 0
+8) 
+*/

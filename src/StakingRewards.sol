@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8;
 
+import "forge-std/console.sol";
+
 contract StakingRewards {
     IERC20 public immutable stakingToken;
     IERC20 public immutable rewardsToken;
@@ -63,13 +65,13 @@ contract StakingRewards {
             rewardPerTokenStored +
             (rewardRate * (lastTimeRewardApplicable() - updatedAt) * 1e18) /
             totalSupply;
-    }
+    }   
 
     function stake(uint _amount) external updateReward(msg.sender) {
         require(_amount > 0, "amount = 0");
         stakingToken.transferFrom(msg.sender, address(this), _amount);
-        // balanceOf[msg.sender] += _amount;
-        // totalSupply += _amount;
+        balanceOf[msg.sender] += _amount;
+        totalSupply += _amount;
     }
 
     function withdraw(uint _amount) external updateReward(msg.sender) {
@@ -80,10 +82,13 @@ contract StakingRewards {
     }
 
     function earned(address _account) public view returns (uint) {
-        return
-            ((balanceOf[_account] *
-                (rewardPerToken() - userRewardPerTokenPaid[_account])) / 1e18) +
+        uint tmp = ((balanceOf[_account] *
+            (rewardPerToken() - userRewardPerTokenPaid[_account])) / 1e18) +
             rewards[_account];
+
+        console.log(msg.sender, "earned", tmp);
+
+        return tmp;
     }
 
     function getReward() external updateReward(msg.sender) {
