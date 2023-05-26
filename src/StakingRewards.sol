@@ -65,7 +65,7 @@ contract StakingRewards {
             rewardPerTokenStored +
             (rewardRate * (lastTimeRewardApplicable() - updatedAt) * 1e18) /
             totalSupply;
-    }   
+    }
 
     function stake(uint _amount) external updateReward(msg.sender) {
         require(_amount > 0, "amount = 0");
@@ -85,8 +85,6 @@ contract StakingRewards {
         uint tmp = ((balanceOf[_account] *
             (rewardPerToken() - userRewardPerTokenPaid[_account])) / 1e18) +
             rewards[_account];
-
-        console.log(msg.sender, "earned", tmp);
 
         return tmp;
     }
