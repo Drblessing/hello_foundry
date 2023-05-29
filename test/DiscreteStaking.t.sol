@@ -20,6 +20,25 @@ contract DiscreteTest is Test {
         deal(address(WETH), address(this), 1e50);
         WETH.approve(address(discreteStaking), 1e50);
 
+        discreteStaking.stake(1);
         discreteStaking.updateRewardIndex(10);
+
+        console.log("rewardIndex", discreteStaking.rewardIndex());
+
+        discreteStaking.updateRewardIndex(10);
+
+        console.log("rewardIndex", discreteStaking.rewardIndex());
+        
+        discreteStaking.stake(1);
+        discreteStaking.updateRewardIndex(10);
+
+        console.log("rewardIndex", discreteStaking.rewardIndex());
+
+        console.log("_calculateRewards", discreteStaking._calculateRewards(address(this)));
+        console.log("balanceOf", discreteStaking.balanceOf(address(this)));
+
+
+
+
     }
 }

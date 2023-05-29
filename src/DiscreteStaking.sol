@@ -9,9 +9,9 @@ contract DiscreteStakingRewards {
     uint public totalSupply;
 
     uint private constant MULTIPLIER = 1e18;
-    uint private rewardIndex;
-    mapping(address => uint) private rewardIndexOf;
-    mapping(address => uint) private earned;
+    uint public rewardIndex;
+    mapping(address => uint) public rewardIndexOf;
+    mapping(address => uint) public earned;
 
     constructor(address _stakingToken, address _rewardToken) {
         stakingToken = IERC20(_stakingToken);
@@ -23,7 +23,7 @@ contract DiscreteStakingRewards {
         rewardIndex += (reward * MULTIPLIER) / totalSupply;
     }
 
-    function _calculateRewards(address account) private view returns (uint) {
+    function _calculateRewards(address account) public view returns (uint) {
         uint shares = balanceOf[account];
         return (shares * (rewardIndex - rewardIndexOf[account])) / MULTIPLIER;
     }
