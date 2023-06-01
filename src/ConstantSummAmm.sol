@@ -77,6 +77,8 @@ contract CSAMM {
 
         s should be proportional to increase from L to L + a
         (L + a) / L = (T + s) / T
+        1 + a / L = 1 + s / T
+        a / L = s / T
 
         s = a * T / L
         */
