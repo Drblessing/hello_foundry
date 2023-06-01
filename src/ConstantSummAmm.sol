@@ -103,9 +103,30 @@ contract CSAMM {
 
         a / L = s / T
 
+        (d0 + d1) / (reserve0 + reserve1) = _shares / totalSupply
+        (d0 + d1) = (reserve0 + reserve1) * _shares / totalSupply
+        (d0 + d1) = (reserve0 * _shares / totalSupply) + (reserve1 * _shares / totalSupply)
+
         a = L * s / T
           = (reserve0 + reserve1) * s / T
+        
+        a = (reserve0 * s / T) + (reserve1 * s / T)
+          = d0 + d1
         */
+
+        /* So how much of each token do we get?
+        Let's say we have 10% of total supply
+        So totalSupply = 100, _shares = 10
+        And reserve0 = 30 and reserve1 = 70
+
+        Thus, we should get 30% of reserve0 and 70% of reserve1
+        Because, 
+        d0 = _shares * (reserve0 / totalSupply) 
+        = _shares * (proportion of total reserves that are reserve0)
+        = .3 * 10 = 3
+
+
+        */ 
         d0 = (reserve0 * _shares) / totalSupply;
         d1 = (reserve1 * _shares) / totalSupply;
 
